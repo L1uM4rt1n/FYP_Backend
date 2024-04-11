@@ -6,6 +6,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 import joblib
+import traceback
 # import os
 
 
@@ -41,9 +42,12 @@ db = SQLAlchemy(app)
 # app_root = os.path.dirname(os.path.abspath(__file__))
 
 # model_path = os.path.join(app_root, "linear_combi.pkl")
-model_path = "./linear_combi.pkl"
-with open(model_path, "rb") as model_file:
-    model = joblib.load(model_file)
+try:
+    model_path = "./linear_combi.pkl"
+    with open(model_path, "rb") as model_file:
+        model = joblib.load(model_file)
+except Exception as e:
+    traceback.print_exc()
 
 # scaler_path = os.path.join(app_root, "scaler.pkl")
 scaler_path = "./scaler.pkl"
