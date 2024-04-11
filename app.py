@@ -176,7 +176,7 @@ class TriageResult(db.Model):
 @app.route("/", methods=["GET"])
 def index():
     # template_path = os.path.join(app_root, "templates/index.html")
-    template_path = "./templates/index.html"
+    template_path = "index.html"
     try:
         return render_template(template_path)
     except Exception as _:
@@ -185,7 +185,7 @@ def index():
 @app.route("/favicon.ico", methods=["GET"])
 def favicon():
     # static_path = os.path.join(app_root, "static/favicon.ico")
-    static_path = "./static/favicon.ico"
+    static_path = "favicon.ico"
     try:
         return f"<img src={static_path}>"
     except Exception as _:
