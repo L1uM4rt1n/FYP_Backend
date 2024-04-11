@@ -32,7 +32,7 @@ PATIENT_ID = "patients.patient_id"
 
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:8080"])
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://b5cf0d40805bd4:927befde@us-cluster-east-01.k8s.cleardb.net/heroku_ea7263fb720321f?reconnect=true" # heroku deployment
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://b5cf0d40805bd4:927befde@us-cluster-east-01.k8s.cleardb.net/heroku_ea7263fb720321f" # heroku deployment
 # app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:LZWMadh7187%40%400100@localhost/triagedb"  # martin
 
 db = SQLAlchemy(app)
@@ -171,7 +171,7 @@ class TriageResult(db.Model):
 
 @app.route("/", methods=["GET"])
 def index():
-    return "Connection is up", 200
+    return "Flask app is up", 200
 
 @app.route("/favicon.ico", methods=["GET"])
 def favicon():
