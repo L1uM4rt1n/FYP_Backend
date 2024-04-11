@@ -1,12 +1,12 @@
 import pandas as pd
 import numpy as np
 import datetime
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 import joblib
-import os
+# import os
 
 
 class CustomEnsemble:
@@ -38,15 +38,15 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://b5cf0d40805bd4:927befde@us-clus
 
 db = SQLAlchemy(app)
 
-app_root = os.path.dirname(os.path.abspath(__file__))
+# app_root = os.path.dirname(os.path.abspath(__file__))
 
-model_path = os.path.join(app_root, "linear_combi.pkl")
-# model_path = "./linear_combi.pkl"
+# model_path = os.path.join(app_root, "linear_combi.pkl")
+model_path = "./linear_combi.pkl"
 with open(model_path, "rb") as model_file:
     model = joblib.load(model_file)
 
-scaler_path = os.path.join(app_root, "scaler.pkl")
-# scaler_path = "./scaler.pkl"
+# scaler_path = os.path.join(app_root, "scaler.pkl")
+scaler_path = "./scaler.pkl"
 with open(scaler_path, "rb") as scaler_file:
     scaler = joblib.load(scaler_file)
 
@@ -171,12 +171,16 @@ class TriageResult(db.Model):
 
 @app.route("/", methods=["GET"])
 def index():
-    return "Hello, World!"
+    # template_path = os.path.join(app_root, "templates/index.html")
+    template_path = "./templates/index.html"
+    return render_template(template_path)
 
 
 @app.route("/favicon.ico", methods=["GET"])
 def favicon():
-    return "Image not Found"
+    # static_path = os.path.join(app_root, "static/favicon.ico")
+    static_path = "./static/favicon.ico"
+    return f"<img src={static_path}>"
 
 
 @app.route("/submit_patient", methods=["POST"])
@@ -915,4 +919,4 @@ def get_triage_result(patient_id, visit_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=False)
