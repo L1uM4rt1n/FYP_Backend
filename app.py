@@ -854,20 +854,13 @@ def submit_triage_result():
     if patient is None:
         return {"error": "Patient not found for the given patient ID"}, 404
 
-    result = db.session.query(TriageResult).filter(TriageResult.patient_id == data.get("patient_id"),
-                                                   TriageResult.visit_id == data.get("visit_id")).first()
-
-    if result is None:
-        triage_result = TriageResult(
-            patient_id=data.get("patient_id"),
-            visit_id=data.get("visit_id"),
-            triage_timestamp=func.now(),
-            triage_class=data.get("triage_class")
-        )
-        db.session.add(triage_result)
-    else:
-        result.triage_timestamp = func.now()
-        result.triage_class = data.get("triage_class")
+    triage_result = TriageResult(
+        patient_id=data.get("patient_id"),
+        visit_id=data.get("visit_id"),
+        triage_timestamp=func.now(),
+        triage_class=data.get("triage_class")
+    )
+    db.session.add(triage_result)
 
     try:
         db.session.commit()
