@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import datetime
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, abort
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
@@ -177,15 +177,19 @@ class TriageResult(db.Model):
 def index():
     # template_path = os.path.join(app_root, "templates/index.html")
     template_path = "./templates/index.html"
-    return render_template(template_path)
-
+    try:
+        return render_template(template_path)
+    except Exception as _:
+        abort(404)
 
 @app.route("/favicon.ico", methods=["GET"])
 def favicon():
     # static_path = os.path.join(app_root, "static/favicon.ico")
     static_path = "./static/favicon.ico"
-    return f"<img src={static_path}>"
-
+    try:
+        return f"<img src={static_path}>"
+    except Exception as _:
+        abort(404)
 
 @app.route("/submit_patient", methods=["POST"])
 def submit_patient():
