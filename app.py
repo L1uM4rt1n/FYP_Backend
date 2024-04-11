@@ -552,12 +552,6 @@ def submit_features():
 
         prediction = predict_triage(get_patient_id, get_visit_id)
 
-        results_checker = db.session.query(TriageResult).filter(TriageResult.patient_id == get_patient_id,
-                                                                TriageResult.visit_id == get_visit_id).first()
-        if results_checker is not None:
-            db.session.delete(results_checker)
-            db.session.commit()
-
         triage_result = TriageResult(
             patient_id=get_patient_id,
             visit_id=get_visit_id,
