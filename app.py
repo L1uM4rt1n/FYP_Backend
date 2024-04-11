@@ -7,7 +7,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 import joblib
 import traceback
-# import os
 
 
 class CustomEnsemble:
@@ -38,9 +37,6 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://b5cf0d40805bd4:927befde@us-clus
 
 db = SQLAlchemy(app)
 
-# app_root = os.path.dirname(os.path.abspath(__file__))
-
-# model_path = os.path.join(app_root, "linear_combi.pkl")
 try:
     # model_path = "./linear_combi.pkl"
     model_path = "./rf.pkl"
@@ -175,12 +171,7 @@ class TriageResult(db.Model):
 
 @app.route("/", methods=["GET"])
 def index():
-    # template_path = os.path.join(app_root, "templates/index.html")
-    template_path = "index.html"
-    try:
-        return render_template(template_path)
-    except Exception as _:
-        abort(404)
+    return "Connection is up", 200
 
 @app.route("/favicon.ico", methods=["GET"])
 def favicon():
