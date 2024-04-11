@@ -41,10 +41,12 @@ db = SQLAlchemy(app)
 app_root = os.path.dirname(os.path.abspath(__file__))
 
 model_path = os.path.join(app_root, "linear_combi.pkl")
+# model_path = "./linear_combi.pkl"
 with open(model_path, "rb") as model_file:
     model = joblib.load(model_file)
 
 scaler_path = os.path.join(app_root, "scaler.pkl")
+# scaler_path = "./scaler.pkl"
 with open(scaler_path, "rb") as scaler_file:
     scaler = joblib.load(scaler_file)
 
@@ -165,6 +167,16 @@ class TriageResult(db.Model):
     visit_id = db.Column(db.Integer, db.ForeignKey(VISIT_ID), primary_key=True)
     triage_timestamp = db.Column(db.DateTime, default=func.now(), primary_key=True)
     triage_class = db.Column(db.Integer)
+
+
+@app.route("/", methods=["GET"])
+def index():
+    return "Hello, World!"
+
+
+@app.route("/favicon.ico", methods=["GET"]
+def favicon():
+    return "Image not Found"
 
 
 @app.route("/submit_patient", methods=["POST"])
