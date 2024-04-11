@@ -25,7 +25,7 @@ db = SQLAlchemy(app)
 
 # model_path = os.path.join(app_root, "linear_combi.pkl")
 try:
-    model_path = "./rf.pkl"
+    model_path = "./linear_combi.pkl"
     with open(model_path, "rb") as model_file:
         model = joblib.load(model_file)
 except Exception as e:
