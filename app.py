@@ -33,7 +33,7 @@ PATIENT_ID = "patients.patient_id"
 
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:8080"])
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://b4d2c2b7d1544f:981bde33@us-cluster-east-01.k8s.cleardb.net/heroku_ad5b0fd3790c6a3?reconnect=true" # heroku deployment
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://b5cf0d40805bd4:927befde@us-cluster-east-01.k8s.cleardb.net/heroku_ea7263fb720321f?reconnect=true" # heroku deployment
 # app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:LZWMadh7187%40%400100@localhost/triagedb"  # martin
 
 db = SQLAlchemy(app)
