@@ -619,6 +619,7 @@ def update_vitals_for_prediction():
         db.session.commit()
         return {"message": "Vitals updated successfully with the triage result: " + str(prediction + 1)}
     except Exception as e:
+        traceback.print_exc()
         return {"error": f"An error occurred: {str(e)}"}, 500
 
 
