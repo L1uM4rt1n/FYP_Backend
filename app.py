@@ -31,7 +31,7 @@ VISIT_ID = "visits.visit_id"
 PATIENT_ID = "patients.patient_id"
 
 app = Flask(__name__)
-CORS(app, origins=["https://is-483-22-triagers-temp-deployment-1-za4x-6yawwv1w9.vercel.app", "http://localhost:8080"])
+CORS(app, origins=["https://is-483-22-triagers-temp-deployment-1-za4x-3ddxhjoub.vercel.app/", "http://localhost:8080"])
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://b5cf0d40805bd4:927befde@us-cluster-east-01.k8s.cleardb.net/heroku_ea7263fb720321f" # heroku deployment
 # app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:LZWMadh7187%40%400100@localhost/triagedb"  # martin
 
