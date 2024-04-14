@@ -31,7 +31,7 @@ VISIT_ID = "visits.visit_id"
 PATIENT_ID = "patients.patient_id"
 
 app = Flask(__name__)
-CORS(app, origins=["https://is-483-22-triagers-temp-deployment-1-za4x-3ddxhjoub.vercel.app", "http://localhost:8080"])
+CORS(app, origins=["http://localhost:8080"])
 # app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://b5cf0d40805bd4:927befde@us-cluster-east-01.k8s.cleardb.net/heroku_ea7263fb720321f" # heroku deployment
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:LZWMadh7187%40%400100@localhost/triagedb"  # martin
 
@@ -45,7 +45,6 @@ try:
 except Exception as e:
     traceback.print_exc()
 
-# scaler_path = os.path.join(app_root, "scaler.pkl")
 scaler_path = "./scaler.pkl"
 with open(scaler_path, "rb") as scaler_file:
     scaler = joblib.load(scaler_file)
@@ -217,14 +216,14 @@ def submit_patient():
         return {"message": "Patient and Visit tables updated successfully"}
     except Exception as e:
         db.session.rollback()
-        return {"error": str(e)}, 500
+        return {"error": f"An error occurred: {str(e)}"}, 500
 
 
 @app.route("/get_latest_visit/<string:patient_id>", methods=["GET"])
 def get_latest_visit(patient_id):
     latest_visit = Visit.query.filter_by(patient_id=patient_id).order_by(Visit.visit_id.desc()).first()
     if latest_visit is None:
-        return {"error": "No visits found for this patient"}, 404
+        return {"error": f"No visits found for this patient with id: {patient_id}"}, 404
 
     return {"visit_id": latest_visit.visit_id}
 
@@ -270,7 +269,7 @@ def submit_vitals():
         db.session.commit()
         return {"message": "Vitals submitted successfully"}
     except Exception as e:
-        return {"message": f"An error occurred: {str(e)}"}
+        return {"error": f"An error occurred: {str(e)}"}, 500
 
 
 @app.route("/update_vitals", methods=["POST"])
@@ -308,7 +307,7 @@ def update_vitals():
 def get_vitals_info(patient_id, visit_id):
     vitals = db.session.query(Vital).filter(Vital.patient_id == patient_id, Vital.visit_id == visit_id).first()
     if vitals is None:
-        return {"error": "Vitals not found for the given patient ID and visit ID"}, 404
+        return {"error": f"Vitals not found for the given patient ID: {patient_id} and visit ID: {visit_id}"}, 404
 
     vitals_info = {
         "heartRate": vitals.heart_rate,
@@ -561,10 +560,10 @@ def submit_features():
 
         db.session.add(triage_result)
         db.session.commit()
-        return {"message": "Features and triage result submitted successfully", "triageResult": prediction}
+        return {"message": "Features and triage result submitted successfully", "triageResult": prediction + 1}
     except Exception as e:
         print(str(e))
-        return {"error": str(e)}, 500
+        return {"error": "An error occurred: " + str(e)}, 500
 
 
 @app.route("/update_vitals_for_prediction", methods=["POST"])
@@ -655,7 +654,7 @@ def update_pregnancy_status():
             results_checker.triage_class = prediction + 1
 
         db.session.commit()
-        return {"message": "Pregnancy status updated successfully", "triageResult": prediction}
+        return {"message": "Pregnancy status updated successfully", "triageResult": prediction + 1}
     except Exception as e:
         return {"message": f"An error occurred: {str(e)}"}
 
@@ -749,7 +748,7 @@ def update_features():
         )
         db.session.add(triage_result)
         db.session.commit()
-        return {"message": "Features and triage result updated successfully", "triageResult": prediction}
+        return {"message": "Features and triage result updated successfully", "triageResult": prediction + 1}
 
     except Exception as e:
         print(str(e))
@@ -847,13 +846,14 @@ def get_all_features(patient_id, visit_id):
 @app.route("/submit_triage_result", methods=["POST"])
 def submit_triage_result():
     data = request.get_json()
-    patient = db.session.query(Patient).filter(Patient.patient_id == data.get("patient_id")).first()
+    patient_id = data.get("patient_id")
+    patient = db.session.query(Patient).filter(Patient.patient_id == patient_id).first()
 
     if patient is None:
-        return {"error": "Patient not found for the given patient ID"}, 404
+        return {"error": f"Patient not found for the given patient ID: {patient_id}"}, 404
 
     triage_result = TriageResult(
-        patient_id=data.get("patient_id"),
+        patient_id=patient_id,
         visit_id=data.get("visit_id"),
         triage_timestamp=func.now(),
         triage_class=data.get("triage_class")
@@ -864,7 +864,7 @@ def submit_triage_result():
         db.session.commit()
         return {"message": "Triage result submitted successfully"}
     except Exception as e:
-        return {"message": f"An error occurred: {str(e)}"}
+        return {"message": f"An error occurred: {str(e)}"}, 500
 
 
 @app.route("/update_triage_result", methods=["POST"])
@@ -883,15 +883,15 @@ def update_triage_result():
         db.session.commit()
         return {"message": "Triage result updated successfully"}
     except Exception as e:
-        return {"message": f"An error occurred: {str(e)}"}
+        return {"message": f"An error occurred: {str(e)}"}, 500
 
 
 @app.route("/get_triage_result/<string:patient_id>/<int:visit_id>", methods=["GET"])
 def get_triage_result(patient_id, visit_id):
     triage_result = db.session.query(TriageResult).filter(TriageResult.patient_id == patient_id,
-                                                          TriageResult.visit_id == visit_id).first()
+                                                          TriageResult.visit_id == visit_id).order_by(TriageResult.triage_timestamp.desc()).first()
     if triage_result is None:
-        return {"error": "Triage result not found for the given patient ID and visit ID"}, 404
+        return {"error": f"Triage result not found for the given patient ID: {patient_id} and visit ID: {visit_id}"}, 404
 
     triage_result_for_patient = {
         "patient_id": triage_result.patient_id,
@@ -904,4 +904,4 @@ def get_triage_result(patient_id, visit_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=True, port=5000)
