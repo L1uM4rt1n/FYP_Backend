@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import datetime
-from flask import Flask, request, render_template, abort
+from flask import Flask, request, abort
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
@@ -32,14 +32,14 @@ PATIENT_ID = "patients.patient_id"
 
 app = Flask(__name__)
 CORS(app, origins=["https://is-483-22-triagers-temp-deployment-1-za4x-3ddxhjoub.vercel.app", "http://localhost:8080"])
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://b5cf0d40805bd4:927befde@us-cluster-east-01.k8s.cleardb.net/heroku_ea7263fb720321f" # heroku deployment
-# app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:LZWMadh7187%40%400100@localhost/triagedb"  # martin
+# app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://b5cf0d40805bd4:927befde@us-cluster-east-01.k8s.cleardb.net/heroku_ea7263fb720321f" # heroku deployment
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:LZWMadh7187%40%400100@localhost/triagedb"  # martin
 
 db = SQLAlchemy(app)
 
 try:
-    # model_path = "./linear_combi.pkl"
-    model_path = "./rf.pkl"
+    model_path = "./linear_combi.pkl"
+    # model_path = "./rf.pkl"
     with open(model_path, "rb") as model_file:
         model = joblib.load(model_file)
 except Exception as e:
@@ -625,7 +625,6 @@ def update_pregnancy_status():
     visit_id = data.get("visit_id")
     pregnancy_yes = data.get("pregnancy_yes")
     pregnancy_no = data.get("pregnancy_no")
-    pregnancy_unsure = data.get("pregnant_unsure")
 
     female_patient_info = db.session.query(FemalePatientInfo).filter(FemalePatientInfo.patient_id == patient_id,
                                                                      FemalePatientInfo.visit_id == visit_id).first()
@@ -635,7 +634,6 @@ def update_pregnancy_status():
     else:
         female_patient_info.pregnant_yes = pregnancy_yes
         female_patient_info.pregnant_no = pregnancy_no
-        female_patient_info.pregnant_unsure = pregnancy_unsure
 
     try:
         db.session.commit()

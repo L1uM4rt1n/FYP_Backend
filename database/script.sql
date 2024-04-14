@@ -1,8 +1,8 @@
 -- for martin use -- mysql -u root -p < ./database/script.sql (BE dir)
--- for deployment -- mysql -u b5cf0d40805bd4 -h mysql -u b5cf0d40805bd4 -p -h us-cluster-east-01.k8s.cleardb.net heroku_ea7263fb720321f < ./database/script.sql
+-- for deployment -- mysql -u b5cf0d40805bd4 -h mysql -u b5cf0d40805bd4 -p -h us-cluster-east-01.k8s.cleardb.net heroku_ea7263fb720321f < ./database/script.sql (927befde)
 
--- CREATE DATABASE IF NOT EXISTS triagedb;
--- USE triagedb;
+CREATE DATABASE IF NOT EXISTS triagedb;
+USE triagedb;
 
 DROP TABLE IF EXISTS triage_results;
 DROP TABLE IF EXISTS remaining_questions;
